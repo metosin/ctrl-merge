@@ -16,24 +16,14 @@
                               "-e" ":simple"
                               *command-line-args*))}
 
-         test-cherry {:doc "Run CLJS tests with cherry"
-                      :task (do (println "Running CLJS tests with cherry, without optimizations")
-                                (apply clojure "-M:test:cljs-test-runner:cherry:test-cherry" "-c"
-                                  (str {:optimizations :none})
-                                  *command-line-args*)
-                                (println "Running CLJS tests with cherry, with optimizations")
-                                (apply clojure "-M:test:cljs-test-runner:cherry:test-cherry" "-c"
-                                  (str {:optimizations :advanced,
-                                        ;; see https://clojure.atlassian.net/browse/CLJS-3401
-                                        :optimize-constants false})
-                                  "-e" ":simple"
-                                  *command-line-args*))}
-
          test-bb {:doc "Run Babashka tests"
                   :extra-deps {org.babashka/spec.alpha {:git/url "https://github.com/babashka/spec.alpha"
                                                         :git/sha "951b49b8c173244e66443b8188e3ff928a0a71e7"}}
                   :extra-paths ["src" "test"]
                   :task bb-test-runner/run-tests}
+
+         test {:doc "Run all tests"
+               :depends [test-clj test-cljs test-bb]}
 
          repl {:doc "Repl"
                :task (apply clojure "-M:rebel:test -m rebel-readline.main" *command-line-args*)}}}
