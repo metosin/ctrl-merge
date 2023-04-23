@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+set -ex
+clojure -M:rebel:test -m rebel-readline.main

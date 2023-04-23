@@ -1,0 +1,28 @@
+{:paths ["src"]
+ :deps {org.clojure/clojure {:mvn/version "1.11.1"}}
+ :aliases {:test {:extra-paths ["test"]
+                  :extra-deps {lambdaisland/kaocha {:mvn/version "1.82.1306"}
+                               lambdaisland/kaocha-cljs {:mvn/version "1.4.130"}}}
+           :cljs-test-runner {:extra-deps {olical/cljs-test-runner {:mvn/version "3.8.0"}}
+                              :extra-paths ["test" "cljs-test-runner-out/gen"]
+                              :main-opts ["-m" "cljs-test-runner.main" "-d" "test"]}
+           :build {:deps {io.github.clojure/tools.build {:git/tag "v0.9.4" :git/sha "76b78fe"}}
+                   :ns-default build}
+           :rebel {:extra-paths ["dev"]
+                   :extra-deps {com.bhauman/rebel-readline #_:clj-kondo/ignore {:mvn/version "RELEASE"}
+                                org.clojure/tools.namespace #_:clj-kondo/ignore {:mvn/version "RELEASE"}}}
+
+           :jar {:extra-deps {pack/pack.alpha
+                              {:git/url "https://github.com/juxt/pack.alpha.git"
+                               :sha "b093f79420fef019faf62a75b888b5e10f4e8cc9"}}
+                 :main-opts ["-m" "mach.pack.alpha.skinny" "--no-libs"
+                             "--project-path" "ctrl-merge.jar"]}
+           :deploy {:extra-deps {slipset/deps-deploy {:mvn/version "0.2.1"}}
+                    :exec-fn deps-deploy.deps-deploy/deploy
+                    :exec-args {:installer :remote
+                                :artifact "malli.jar"}}
+           :install {:extra-deps {deps-deploy/deps-deploy #_:clj-kondo/ignore {:mvn/version "RELEASE"}}
+                     :main-opts ["-m" "deps-deploy.deps-deploy" "install"
+                                 "malli.jar"]}
+           :clojure-10 {:extra-deps {org.clojure/clojure {:mvn/version "1.10.3"}}}
+           :clojure-11 {}}}
