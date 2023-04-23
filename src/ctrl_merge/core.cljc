@@ -1,5 +1,7 @@
-(ns meta-merge.core
-  (:require [clojure.set :as set]))
+(ns ctrl-merge.core
+  (:refer-clojure :exclude [merge])
+  (:require [clojure.core :as c]
+            [clojure.set :as set]))
 
 (defn- meta*
   "Returns the metadata of an object, or nil if the object cannot hold
@@ -58,26 +60,26 @@
         (and (displace? left)   ;; Pick the rightmost
              (displace? right)) ;; if both are marked as displaceable
         (with-meta* right
-          (merge (meta* left) (meta* right)))
+          (c/merge (meta* left) (meta* right)))
 
         (and (replace? left)    ;; Pick the rightmost
              (replace? right))  ;; if both are marked as replaceable
         (with-meta* right
-          (merge (meta* left) (meta* right)))
+          (c/merge (meta* left) (meta* right)))
 
         (or (displace? left)
             (replace? right))
         (with-meta* right
-          (merge (-> left meta* (dissoc :displace))
+          (c/merge (-> left meta* (dissoc :displace))
                  (-> right meta* (dissoc :replace))))
 
         (or (replace? left)
             (displace? right))
         (with-meta* left
-          (merge (-> right meta* (dissoc :displace))
+          (c/merge (-> right meta* (dissoc :displace))
                  (-> left meta* (dissoc :replace))))))
 
-(defn meta-merge
+(defn merge
   "Recursively merge values based on the information in their metadata."
   ([] {})
   ([left] left)
@@ -86,7 +88,7 @@
          (pick-prioritized left right)
 
          (and (map? left) (map? right))
-         (merge-with meta-merge left right)
+         (merge-with merge left right)
 
          (and (set? left) (set? right))
          (set/union right left)
@@ -95,7 +97,7 @@
          (if (or (-> left meta :prepend)
                  (-> right meta :prepend))
            (-> (into (empty left) (concat right left))
-             (with-meta (merge (meta left)
+             (with-meta (c/merge (meta left)
                                (select-keys (meta right) [:displace]))))
            (into (empty left) (concat left right)))
 
