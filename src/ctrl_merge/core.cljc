@@ -103,4 +103,4 @@
 
          :else right))
   ([left right & more]
-   (reduce meta-merge left (cons right more))))
+   (reduce merge left (cons right more))))
