@@ -1,16 +1,12 @@
 # Ctrl-Merge
 
+[![Clojars Project](https://img.shields.io/clojars/v/metosin/ctrl-merge.svg)](https://clojars.org/metosin/ctrl-merge)
+
 This is a standalone and enhanced implementation of the [Leiningen][] `meta-merge`
 function, forked from [Meta-Merge][]. It's particularly useful for merging configuration maps.
 
 [Leiningen]: https://github.com/technomancy/leiningen
 [Meta-Merge]: https://github.com/weavejester/meta-merge
-
-## Installation
-
-To install, add the following to your project `:dependencies`:
-
-    [metosin/ctrl-merge "1.0.0"]
 
 ## Usage
 
