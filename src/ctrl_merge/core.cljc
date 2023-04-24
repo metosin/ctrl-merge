@@ -43,17 +43,17 @@
    (or (some (some-fn nil? displace? replace?) [left right])
        (top-displace? left))))
 
-(defn- remove-top-displace [obj]
-  (if-not (top-displace? obj)
-    obj
-    (vary-meta obj dissoc :top-displace)))
+(defn- remove-top-displace [obj options]
+  (cond (:replace-nil options) nil
+        (top-displace? obj) obj
+        :else (vary-meta obj dissoc :top-displace)))
 
 (defn- pick-prioritized
   "Picks the highest prioritized element of left and right and merge their
   metadata."
-  [left right]
+  [left right options]
   (cond (nil? left) right
-        (nil? right) (remove-top-displace left)
+        (nil? right) (remove-top-displace left options)
 
         (top-displace? left) right
 
@@ -83,12 +83,13 @@
   "Recursively merge values based on the information in their metadata."
   ([] {})
   ([left] left)
-  ([left right]
+  ([left right] (merge left right nil))
+  ([left right options]
    (cond (different-priority? left right)
-         (pick-prioritized left right)
+         (pick-prioritized left right options)
 
          (and (map? left) (map? right))
-         (merge-with merge left right)
+         (merge-with #(merge %1 %2 options) left right)
 
          (and (set? left) (set? right))
          (set/union right left)
@@ -97,10 +98,9 @@
          (if (or (-> left meta :prepend)
                  (-> right meta :prepend))
            (-> (into (empty left) (concat right left))
-             (with-meta (c/merge (meta left)
-                               (select-keys (meta right) [:displace]))))
+               (with-meta (c/merge (meta left)
+                                   (select-keys (meta right) [:displace]))))
            (into (empty left) (concat left right)))
 
-         :else right))
-  ([left right & more]
-   (reduce merge left (cons right more))))
+         :else right)))
+

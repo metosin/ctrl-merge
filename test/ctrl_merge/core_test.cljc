@@ -3,7 +3,7 @@
                :cljs [cljs.test :refer-macros [deftest is testing]])
             [ctrl-merge.core :as cm]))
 
-(deftest test-meta-merge
+(deftest test-ctrl-merge
   (testing "simple merge"
     (is (= (cm/merge {:a 1 :b 2} {:b 3 :c 4})
            {:a 1 :b 3 :c 4})))
@@ -51,7 +51,12 @@
            {}))
     (is (= (cm/merge {:a :b})
            {:a :b}))
-    (is (= (cm/merge {:a :b :x 1} {:a :c :y 2} {:a :d})
-           {:a :d :x 1 :y 2}))
-    (is (= (cm/merge {:a :b :x 1} {:a :c :y 2} {:a :d} {:y 4 :z 3})
-           {:a :d :x 1 :y 4 :z 3}))))
+    (is (= (cm/merge {:a :b :x 1} {:a :c :y 2})
+           {:a :c :x 1 :y 2}))))
+
+(deftest test-new-features
+  (testing "replace-nil"
+    (is (= (cm/merge {:a {:b 1}} {:a nil})
+           {:a {:b 1}}))
+    (is (= (cm/merge {:a {:b 1}} {:a nil} {:replace-nil true})
+           {:a nil}))))

@@ -16,7 +16,7 @@ The `merge` function recursively merges two data structures.
 (require '[ctrl-merge.core :as cm])
 
 (cm/merge {:a [:b :c]} {:a [:d]})
-=> {:a [:b :c :d]}
+; => {:a [:b :c :d]}
 ```
 
 ## Metadata
@@ -32,7 +32,7 @@ below.
 
 ```clojure
 (cm/merge {:a [:b :c]} {:a ^:prepend [:d]})
-=> {:a [:d :b :c]}
+; => {:a [:d :b :c]}
 ```
 
 ### Replace
@@ -43,7 +43,7 @@ the left. You can see this below:
 
 ```clojure
 (cm/merge {:a [:b :c]} {:a ^:replace [:d]})
-=> {:a [:d]}
+; => {:a [:d]}
 ```
 
 With replace the map to the right takes precedence.
@@ -56,11 +56,24 @@ left. You can see this below:
 
 ```clojure
 (cm/merge {:a [:b :c]} {:a ^:displace [:d]})
-=> {:a [:b :c]}
+; => {:a [:b :c]}
 ```
 
 With displace the map to the left takes precedence. This makes displace a
 good solution for default values.
+
+### Options
+
+`merge` can be configured using extra `options` argument. Supported options
+
+| Key            | Description                        |
+|----------------|------------------------------------|
+| `:replace-nil` | `nil` value on right position wins |
+
+```clojure
+(cm/merge {:a {:b 1}} {:a nil} {:replace-nil true})
+; => {:a nil}
+```
 
 ## License
 
